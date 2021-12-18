@@ -120,11 +120,11 @@ if __name__ == '__main__':
                   - Bitcon: BTC - Dash: DASH - Litecoin: LTC - Zetacoin: ZEC - Dogecoin: DOGE')
 
     print('Finding the index of the first block')
-    firstBlock = findFirstBlock(start, 1000000)
+    lowerB = findFirstBlock(start, 1000000)
     print('Finding the index of the last block')
-    lastBlock = findLastBlock(end, firstBlock)
+    upperB = findLastBlock(end, lowerB)
     print('Start reading the blocks')
-    nodeSet, transList = download([firstBlock, lastBlock])
+    nodeSet, transList = download(lowerB, upperB)
 
     with open(fileRes, 'w') as f:
         print('Saving the graph in ' + fileRes)
