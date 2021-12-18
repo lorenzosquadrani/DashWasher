@@ -1,7 +1,7 @@
 #!/bin/bash
 
 YEAR=2021
-MONTH=05
+MONTH=01
 DAY=01
 
 set -e   # set behaviour: exit the script if any command fails
@@ -16,12 +16,12 @@ fi
 
 for i in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23
 do
-    if test -f "DASH-$YEAR-$MONTH-$DAY/$k.txt";
+    if test -f "DASH-$YEAR-$MONTH-$DAY/$i.txt";
     then
-        echo "The file with hour $k - $i already exists, I will skip it."
+        echo "The file with hour $i already exists, I will skip it."
         continue
     else
         echo "Downloading transactions of the day $YEAR/$MONTH/$DAY"
-        python3 SoChainDownloader.py "dash" "$YEAR-$MONTH-$DAY-$i:00:00" "$YEAR-$MONTH-$DAY-$i:59:59" "DASH-$YEAR-$MONTH-$DAY/$k.txt"
+        python3 SoChainDownloader.py "dash" "$YEAR-$MONTH-$DAY-$i:00:00" "$YEAR-$MONTH-$DAY-$i:59:59" "DASH-$YEAR-$MONTH-$DAY/$i.txt"
     fi
 done
