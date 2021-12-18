@@ -6,6 +6,8 @@ DAY=01
 
 set -e   # set behaviour: exit the script if any command fails
 
+echo "Downloading transactions of the day $YEAR/$MONTH/$DAY"
+
 if test -d "DASH-$YEAR-$MONTH-$DAY"; then
     echo "Found a pre-existing folder for this day. I will try to complete it."
 else
@@ -21,7 +23,6 @@ do
         echo "The file with hour $i already exists, I will skip it."
         continue
     else
-        echo "Downloading transactions of the day $YEAR/$MONTH/$DAY"
         python3 SoChainDownloader.py "dash" "$YEAR-$MONTH-$DAY-$i:00:00" "$YEAR-$MONTH-$DAY-$i:59:59" "DASH-$YEAR-$MONTH-$DAY/$i.txt"
     fi
 done

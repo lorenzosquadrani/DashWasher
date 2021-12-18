@@ -16,8 +16,6 @@ abs_path = os.path.dirname(os.path.realpath(__file__))
 
 N_files = args.n_files
 
-crypto = 'DASH'
-
 if args.directory:
     directory = args.directory
 else:
@@ -26,14 +24,14 @@ else:
 if args.filename:
     output = directory + args.filename
 else:
-    output = directory + crypto + "_merged.txt"
+    output = directory + "merged.txt"
 
-files = [directory + crypto + '_' + str(idx+1) + '.net' for idx in range(N_files)]
+files = [directory + str(idx).zfill(2) + '.txt' for idx in range(N_files)]
 
 first_line = True
 
 with open(output, 'w+') as outfile:
-    output.write("Key-sender Key-receiver")
+    outfile.write("Key-sender Key-receiver\n")
     for f in files:
         first_line = True
         with open(f) as infile:
@@ -41,4 +39,4 @@ with open(output, 'w+') as outfile:
                 if first_line:
                     first_line = False
                 else:
-                    output.write(line)
+                    outfile.write(line)
