@@ -15,12 +15,12 @@ def findFirstBlock(timeBound, index):
 
         if time < timeBound:
             index = index + step
-            if descending:
+            if descending is True:
                 step = int(step / 2)
                 descending = False
         else:
             index = index - step
-            if descending:
+            if descending is False:
                 step = int(step / 2)
                 descending = True
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
         if crypto not in ['BTC', 'LTC', 'ZEC', 'DASH', 'DOGE']:
 
             sys.exit('CryptoCurrency must be one of the following:\n\
-	    		  - Bitcon: BTC - Dash: DASH - Litecoin: LTC - Zetacoin: ZEC - Dogecoin: DOGE')
+                  - Bitcon: BTC - Dash: DASH - Litecoin: LTC - Zetacoin: ZEC - Dogecoin: DOGE')
 
     print('Finding the index of the first block')
     firstBlock = findFirstBlock(start, 1000000)
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     lastBlock = findLastBlock(end, firstBlock)
     print('Start reading the blocks')
     nodeSet, transList = download([firstBlock, lastBlock])
-    
+
     with open(fileRes, 'w') as f:
         print('Saving the graph in ' + fileRes)
 
