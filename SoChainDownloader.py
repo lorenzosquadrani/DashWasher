@@ -125,3 +125,10 @@ if __name__ == '__main__':
     lastBlock = findLastBlock(end, firstBlock)
     print('Start reading the blocks')
     nodeSet, transList = download([firstBlock, lastBlock])
+    
+    with open(fileRes, 'w') as f:
+        print('Saving the graph in ' + fileRes)
+
+        print('Key-sender Key-receiver', file=f)
+        for t in transList:
+            print(str(t.sender) + ' ' + str(t.receiver), file=f)
