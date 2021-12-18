@@ -1,7 +1,7 @@
 #!/bin/bash
 
 YEAR=2021
-MONTH=01
+MONTH=05
 DAY=01
 
 set -e   # set behaviour: exit the script if any command fails
@@ -22,6 +22,6 @@ do
         continue
     else
         echo "Downloading transactions of the day $YEAR/$MONTH/$DAY"
-        ./main.sh "-dlt" "dash" "-start" "$YEAR-$MONTH-$DAY-$i:00:00" "-end" "$YEAR-$MONTH-$DAY-$i:59:59" "-res" "DASH-$YEAR-$MONTH-$DAY/$k.txt"
+        python3 SoChainDownloader.py "dash" "$YEAR-$MONTH-$DAY-$i:00:00" "$YEAR-$MONTH-$DAY-$i:59:59" "DASH-$YEAR-$MONTH-$DAY/$k.txt"
     fi
 done
