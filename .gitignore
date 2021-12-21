@@ -1,0 +1,18 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+
+# Unit test / coverage reports
+.coverage
+htmlcov/
+coverage.xml
+
+# Sphinx documentation
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# tests files
+temporary/
+.hypothesis/
