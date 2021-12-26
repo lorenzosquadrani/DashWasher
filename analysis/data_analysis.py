@@ -2,6 +2,7 @@
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
+import random
 
 #%%
 ##---------------------- READ FILE -----------------------##
@@ -85,3 +86,25 @@ clust_coeff_random = nx.average_clustering(random_graph)
 
 print("Clustering coefficient of data graph: {}".format(clust_coeff_data))
 print("Clustering coefficient of random graph: {}".format(clust_coeff_random))
+
+# %%
+##------------------- MAIN COMPONENTS --------------------##
+##--------------------------------------------------------##
+
+fraction_sample = 1.0/1
+
+main_comp_data = data_graph.subgraph(max(nx.weakly_connected_components(data_graph), key=len)).copy()
+main_comp_random = random_graph.subgraph(max(nx.weakly_connected_components(random_graph), key=len)).copy()
+
+mc_data_sample = random.sample(main_comp_data.nodes, int (len(main_comp_data.nodes) * fraction_sample ))
+mc_random_sample = random.sample(main_comp_random.nodes, int (len(main_comp_random.nodes) * fraction_sample ))
+
+# %%
+##---------------- AVERAGE SHORTEST PATH -----------------##
+##--------------------------------------------------------##
+
+#TO BE IMPLEMENTED YET!
+def AVG_SP(main_comp_sample):
+    for node in main_comp_sample:	
+    	main_comp_analyzer.add_metric("main_comp_avg_path_len", 
+    		metric=metrics.total_paths_length_from_source, args=(node, main_comp_sample, ))
