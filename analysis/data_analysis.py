@@ -26,8 +26,13 @@ transactions['id_receiver'] = [nodes_dict[address] for address in transactions['
 ##------------------- BUILD DATA GRAPH -------------------##
 ##--------------------------------------------------------##
 
-transactions_weighted = transactions.groupby(transactions.columns.tolist(), as_index=False).size()
-data_graph = nx.from_pandas_edgelist(transactions_weighted, 'id_sender', 'id_receiver', 'size', create_using=nx.DiGraph)
+weighted_graph = False
+
+if weighted_graph:
+    transactions_weighted = transactions.groupby(transactions.columns.tolist(), as_index=False).size()
+    data_graph = nx.from_pandas_edgelist(transactions_weighted, 'id_sender', 'id_receiver', 'size', create_using=nx.DiGraph)
+else:
+    data_graph = nx.from_pandas_edgelist(transactions, 'id_sender', 'id_receiver', create_using=nx.DiGraph)
 
 n_nodes_data = data_graph.number_of_nodes()
 n_edges_data = data_graph.number_of_edges()
@@ -70,3 +75,13 @@ n_edges_random = random_graph.number_of_edges()
 
 print("Number of nodes of random graph: ", n_nodes_random)
 print("Number of edges of random graph: ", n_edges_random)
+
+# %%
+##---------------- CLUSTERING COEFFICIENT ----------------##
+##--------------------------------------------------------##
+
+clust_coeff_data = nx.average_clustering(data_graph)
+clust_coeff_random = nx.average_clustering(random_graph)
+
+print("Clustering coefficient of data graph: {}".format(clust_coeff_data))
+print("Clustering coefficient of random graph: {}".format(clust_coeff_random))
