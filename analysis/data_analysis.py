@@ -3,6 +3,8 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+import numpy as np
+import time
 
 #%%
 ##---------------------- READ FILE -----------------------##
@@ -91,20 +93,43 @@ print("Clustering coefficient of random graph: {}".format(clust_coeff_random))
 ##------------------- MAIN COMPONENTS --------------------##
 ##--------------------------------------------------------##
 
-fraction_sample = 1.0/1
+fraction_sample = 0.2
 
 main_comp_data = data_graph.subgraph(max(nx.weakly_connected_components(data_graph), key=len)).copy()
 main_comp_random = random_graph.subgraph(max(nx.weakly_connected_components(random_graph), key=len)).copy()
 
-mc_data_sample = random.sample(main_comp_data.nodes, int (len(main_comp_data.nodes) * fraction_sample ))
-mc_random_sample = random.sample(main_comp_random.nodes, int (len(main_comp_random.nodes) * fraction_sample ))
+mc_data_sample = main_comp_data.subgraph(np.random.choice(main_comp_data.nodes(), int(fraction_sample*len(main_comp_data.nodes()))))
+mc_random_sample = main_comp_random.subgraph(np.random.choice(main_comp_random.nodes(), int(fraction_sample*len(main_comp_random.nodes()))))
 
 # %%
 ##---------------- AVERAGE SHORTEST PATH -----------------##
 ##--------------------------------------------------------##
 
-#TO BE IMPLEMENTED YET!
-def AVG_SP(main_comp_sample):
-    for node in main_comp_sample:	
-    	main_comp_analyzer.add_metric("main_comp_avg_path_len", 
-    		metric=metrics.total_paths_length_from_source, args=(node, main_comp_sample, ))
+def ASPL(graph):
+    """
+    Compute average shortest path length for directed graph.
+    """
+
+    tot_links = 0.0
+    tot_SPL = 0
+
+    for source in graph.nodes():
+        n_links = 0.0
+        SPL = 0
+        for target in graph.nodes():
+            if nx.has_path(graph, source, target) and source != target:
+                n_links += 1
+                SPL += nx.shortest_path_length(graph, source, target)
+
+        tot_links += n_links
+        tot_SPL += tot_SPL
+    
+    ASPL = tot_SPL/tot_links
+    return ASPL
+
+
+start = time.time()
+
+ASPL_data = ASPL(mc_data_sample)
+
+print("# of nodes: {}\n ASPL: {}\n Time: {}".format(mc_data_sample.number_of_nodes(), ASPL_data, time-start))
