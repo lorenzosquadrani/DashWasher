@@ -93,7 +93,7 @@ print("Clustering coefficient of random graph: {}".format(clust_coeff_random))
 ##------------------- MAIN COMPONENTS --------------------##
 ##--------------------------------------------------------##
 
-fraction_sample = 0.2
+fraction_sample = 0.01
 
 main_comp_data = data_graph.subgraph(max(nx.weakly_connected_components(data_graph), key=len)).copy()
 main_comp_random = random_graph.subgraph(max(nx.weakly_connected_components(random_graph), key=len)).copy()
@@ -111,25 +111,47 @@ def ASPL(graph):
     """
 
     tot_links = 0.0
-    tot_SPL = 0
+    tot_SPL = 0.0
 
     for source in graph.nodes():
         n_links = 0.0
-        SPL = 0
+        SPL = 0.0
         for target in graph.nodes():
             if nx.has_path(graph, source, target) and source != target:
                 n_links += 1
                 SPL += nx.shortest_path_length(graph, source, target)
 
         tot_links += n_links
-        tot_SPL += tot_SPL
+        tot_SPL += SPL
     
     ASPL = tot_SPL/tot_links
     return ASPL
 
+#%%
+##--------------------- ASPL DATA ------------------------##
+##--------------------------------------------------------##
+
+data_time_list = []
+data_ASPL_list = []
+fraction_samples = [0.01, 0.05, 0.1, 0.15, 0.25]
+
+for fs in fraction_samples:
+    mc_data_sample = main_comp_data.subgraph(np.random.choice(main_comp_data.nodes(), int(fs*len(main_comp_data.nodes()))))
+
+    start = time.time()
+    ASPL_data = ASPL(mc_data_sample)
+
+    data_time_list.append(time.time()-start)
+    data_ASPL_list.append(ASPL_data)
+
+#%%
+##--------------------- ASPL RANDOM ----------------------##
+##--------------------------------------------------------##
 
 start = time.time()
 
-ASPL_data = ASPL(mc_data_sample)
+ASPL_random = ASPL(mc_random_sample)
 
-print("# of nodes: {}\n ASPL: {}\n Time: {}".format(mc_data_sample.number_of_nodes(), ASPL_data, time-start))
+print(" # of nodes: {}\n ASPL: {}\n Time: {}".format(mc_random_sample.number_of_nodes(), ASPL_random, time.time()-start))
+
+# %%
