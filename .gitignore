@@ -12,7 +12,11 @@ docs/_build/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.ipynb
 
 # tests files
 temporary/
 .hypothesis/
+
+# output data
+results*/
