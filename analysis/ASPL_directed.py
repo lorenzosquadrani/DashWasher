@@ -3,6 +3,7 @@ import networkx as nx
 import numpy as np
 import time
 import os
+import multiprocessing
 
 #%%
 ##---------------------- READ FILE -----------------------##
@@ -40,6 +41,21 @@ main_comp_data = data_graph.subgraph(max(nx.weakly_connected_components(data_gra
 ##---------------- AVERAGE SHORTEST PATH -----------------##
 ##--------------------------------------------------------##
 
+def SPL(source, graph, tot_links, tot_SPL):
+    
+    n_links = 0.0
+    SPL = 0.0
+    
+    for target in graph.nodes():
+        
+        if nx.has_path(graph, source, target) and source != target:
+            n_links += 1
+            SPL += nx.shortest_path_length(graph, source, target)
+
+    tot_links += n_links
+    tot_SPL += SPL
+        
+
 def ASPL(graph):
     """
     Compute average shortest path length for directed graph.
@@ -47,17 +63,10 @@ def ASPL(graph):
 
     tot_links = 0.0
     tot_SPL = 0.0
-
-    for source in graph.nodes():
-        n_links = 0.0
-        SPL = 0.0
-        for target in graph.nodes():
-            if nx.has_path(graph, source, target) and source != target:
-                n_links += 1
-                SPL += nx.shortest_path_length(graph, source, target)
-
-        tot_links += n_links
-        tot_SPL += SPL
+    
+    pool = multiprocessing.Pool()
+    pool.map(partial(SPL, graph=graph, tot_links=tot_links, tot_SPL=tot_SPL), graph.nodes())
+    pool.close()
     
     ASPL = tot_SPL/tot_links
     return ASPL
