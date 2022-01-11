@@ -3,7 +3,6 @@ import networkx as nx
 import numpy as np
 import time
 import os
-import multiprocessing
 
 #%%
 ##---------------------- READ FILE -----------------------##
@@ -41,32 +40,27 @@ main_comp_data = data_graph.subgraph(max(nx.weakly_connected_components(data_gra
 ##---------------- AVERAGE SHORTEST PATH -----------------##
 ##--------------------------------------------------------##
 
-def SPL(source, graph, tot_links, tot_SPL):
-    
-    n_links = 0.0
-    SPL = 0.0
-    
-    for target in graph.nodes():
-        
-        if nx.has_path(graph, source, target) and source != target:
-            n_links += 1
-            SPL += nx.shortest_path_length(graph, source, target)
 
-    tot_links += n_links
-    tot_SPL += SPL
-        
-
-def ASPL(graph):
+def ASPL(nodes, graph):
     """
     Compute average shortest path length for directed graph.
     """
 
     tot_links = 0.0
     tot_SPL = 0.0
-    
-    pool = multiprocessing.Pool()
-    pool.map(partial(SPL, graph=graph, tot_links=tot_links, tot_SPL=tot_SPL), graph.nodes())
-    pool.close()
+
+    for source in nodes:
+        
+        n_links = 0.0
+        SPL = 0.0
+        
+        for target in graph.nodes():
+            if nx.has_path(graph, source, target) and source != target:
+                n_links += 1
+                SPL += nx.shortest_path_length(graph, source, target)
+
+        tot_links += n_links
+        tot_SPL += SPL
     
     ASPL = tot_SPL/tot_links
     return ASPL
@@ -90,10 +84,14 @@ else:
     
 fraction_samples = [0.01,0.05,0.1,0.15,0.2]
 
+start = time.time()
 for fs in fraction_samples:
-    mc_data_sample = main_comp_data.subgraph(np.random.choice(main_comp_data.nodes(), int(fs*len(main_comp_data.nodes()))))
+    
+    mc_data_sample = main_comp_data.subgraph(
+        np.random.choice(main_comp_data.nodes(), int(fs*len(main_comp_data.nodes())))
+        )
 
-    start = time.time()
+    
     ASPL_data = ASPL(mc_data_sample)
     
     data_time_list.append(time.time()-start)
