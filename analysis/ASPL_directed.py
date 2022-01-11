@@ -1,15 +1,20 @@
 import pandas as pd
+import multiprocessing as mp
 import networkx as nx
 import numpy as np
 import time
 import os
+import json
+
+fraction_samples = [0.02,0.07,0.1,0.2,0.25,0.3,0.4,0.5 ]
+
+
 
 #%%
 ##---------------------- READ FILE -----------------------##
 ##--------------------------------------------------------##
 
 file_path = "../data/DASH-2021-01-01/merged.txt"
-
 transactions = pd.read_csv(file_path, sep = '\s+')
 
 #%%
@@ -41,14 +46,14 @@ main_comp_data = data_graph.subgraph(max(nx.weakly_connected_components(data_gra
 ##--------------------------------------------------------##
 
 
-def ASPL(nodes, graph):
+def ASPL(nodes, graph, return_dict, procnum):
     """
     Compute average shortest path length for directed graph.
     """
-
     tot_links = 0.0
     tot_SPL = 0.0
-
+    
+    
     for source in nodes:
         
         n_links = 0.0
@@ -58,48 +63,73 @@ def ASPL(nodes, graph):
             if nx.has_path(graph, source, target) and source != target:
                 n_links += 1
                 SPL += nx.shortest_path_length(graph, source, target)
-
+        
         tot_links += n_links
-        tot_SPL += SPL
+        tot_SPL += SPL    
     
-    ASPL = tot_SPL/tot_links
-    return ASPL
+    return_dict[procnum] = (tot_SPL, tot_links)
 
 #%%
 ##--------------------- ASPL DATA ------------------------##
 ##--------------------------------------------------------##
 
-if os.path.isdir('./results_ASPL_directed/'):
-    print("Found already existing folder for the results. Trying to read old data and append new ones.")
-    data_samplesize_list = list(np.load('./results_ASPL_directed/subsample_size.npy'))
-    data_time_list       = list(np.load('./results_ASPL_directed/elapsed_time.npy')) 
-    data_ASPL_list       = list(np.load('./results_ASPL_directed/aspl.npy'))
+
+if not os.path.isdir('./results/'):
+    print("Created folder '/results'")
+    os.mkdir('results')
+
+if os.path.isfile('./results/data_dict.json'):
+    print("Found already existing results. Trying to read old data and append new ones.")
     
-    
+    with open('./results/data_dict.json') as f:
+        data = json.loads(f.read())
 else:
-    os.mkdir('results_ASPL_directed')
-    data_samplesize_list = []
-    data_time_list       = []
-    data_ASPL_list       = []
-    
-fraction_samples = [0.01,0.05,0.1,0.15,0.2]
+    data = {'metadata': [],
+            'sample_size': [],
+            'time':[],
+            'ASPL': []}
 
 start = time.time()
 for fs in fraction_samples:
+    
     
     mc_data_sample = main_comp_data.subgraph(
         np.random.choice(main_comp_data.nodes(), int(fs*len(main_comp_data.nodes())))
         )
 
+    nodes = np.array(mc_data_sample.nodes(), dtype='int')
+    num_cpus = mp.cpu_count()
+    nodes_for_subprocess = np.array_split(nodes, num_cpus)
     
-    ASPL_data = ASPL(mc_data_sample)
+    process_list = []
     
-    data_time_list.append(time.time()-start)
-    data_samplesize_list.append(len(mc_data_sample))
-    data_ASPL_list.append(ASPL_data)
+    manager = mp.Manager()
+    return_dict = manager.dict()
+    
+    for i in range(num_cpus):
+
+        p = mp.Process(target=ASPL, args=[nodes_for_subprocess[i], 
+                                          mc_data_sample,
+                                          return_dict,
+                                          i])
+        p.start()
+        process_list.append(p)
+        
+    for p in process_list:
+        p.join()
+        
+    tot_SPL = sum([x[0] for x in return_dict.values()])
+    tot_links = sum([x[1] for x in return_dict.values()])
+    ASPL_data = tot_SPL/tot_links
     
     print(len(mc_data_sample), time.time()-start, ASPL_data)
-    np.save('./results_ASPL_directed/subsample_size.npy', np.array(data_samplesize_list))
-    np.save('./results_ASPL_directed/elapsed_time.npy'  , np.array(data_time_list))
-    np.save('./results_ASPL_directed/aspl.npy'          , np.array(data_ASPL_list))
+    
+    data['metadata'].append({'num_cpus':num_cpus,
+                             'weighted':False,})
+    data['sample_size'].append(len(mc_data_sample))
+    data['time'].append(time.time()-start)
+    data['ASPL'].append(ASPL_data)
+    
+    with open('./results/data_dict.json', 'w') as f:
+        f.write(json.dumps(data))
     
