@@ -14,7 +14,7 @@ import json
 with open("../config.json", 'r') as f:
     config = json.load(f)
 
-verbose = config['verbose']
+deep_graph_analysis = config['deep_graph_analysis']
 directed_graph = config['directed_graph']
 weighted_graph = config['weighted_graph']
 clustering = config['clustering']
@@ -61,14 +61,22 @@ n_nodes_data = data_graph.number_of_nodes()
 n_edges_data = data_graph.number_of_edges()
 
 print("Created graph for the day {}.".format(date))
+if directed_graph:
+    print("The graph is directed")
+else:
+    print("The graph is undirected")
+if weighted_graph:
+    print("The graph is weighted")
+else:
+    print("The graph is unweighted")
 print("Number of nodes of data graph: {}".format(n_nodes_data))
-print("Number of edges of data graph: {}".format(n_edges_data))
+print("Number of edges of data graph: {}\n".format(n_edges_data))
 
 #%%
 ##----------------- DEGREE DISTRIBUTIONS -----------------##
 ##--------------------------------------------------------##
 
-if verbose:
+if deep_graph_analysis:
     def degree_distribution(degree, title, yscale = 'linear', n_bins = 100): 
         plt.hist(degree, bins=n_bins)
         plt.yscale(yscale)
@@ -164,7 +172,7 @@ if not os.path.isdir('./' + folder + '/'):
     os.mkdir(folder)
 
 if os.path.isfile('./'+ folder+ '/data_dict.json'):
-    print("Found already existing results. Trying to read old data and append new ones.")
+    print("Found already existing results. Trying to read old data and append new ones.\n")
     
     with open('./'+folder+'/data_dict.json') as f:
         data = json.loads(f.read())
@@ -175,10 +183,13 @@ else:
             'ASPL': []}
 
 
-start = time.time()
 
 for fs in fraction_samples:
     
+    print("Starting ASPL for a fraction of {} of the sample".format(fs))
+    
+    start = time.time()
+
     mc_data_sample = main_comp_data.subgraph(
         np.random.choice(main_comp_data.nodes(), int(fs*len(main_comp_data.nodes())))
         )
@@ -208,7 +219,9 @@ for fs in fraction_samples:
     tot_links = sum([x[1] for x in return_dict.values()])
     ASPL_data = tot_SPL/tot_links
     
-    print(len(mc_data_sample), time.time()-start, ASPL_data)
+    print("Number of nodes: {}".format(len(mc_data_sample)))
+    print("Time required: {:.2f} seconds".format(time.time()-start))
+    print("ASPL: {:.2f}\n".format(ASPL_data))
     
     data['metadata'].append({'num_cpus':num_cpus,
                              'weighted':False,})
