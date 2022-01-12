@@ -4,6 +4,7 @@ import networkx as nx
 import pandas as pd
 import os
 import time
+import json
 
 
 fraction_samples = [0.1,0.2,0.3, 0.4,0.5, 0.6, 0.7,0.8, 0.9, 1. ]
@@ -82,7 +83,7 @@ for fs in fraction_samples:
     manager = mp.Manager()
     return_dict = manager.dict()
     
-    for i in range(num_cpus):
+    for i in range(num_cpus - 1):
 
         p = mp.Process(target=ASPL, args=[nodes_for_subprocess[i], 
                                           mc_data_sample,

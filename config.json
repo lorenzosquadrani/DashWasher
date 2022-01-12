@@ -1,0 +1,10 @@
+{
+    "verbose" : false,
+    "directed_graph" : false,
+    "weighted_graph" : false,
+    "clustering" : false,
+    "build_rnd" : false,
+    "date" : "2021-01-01",
+    "folder" : "results_undirected",
+    "fraction_samples" : [0.005]
+}
