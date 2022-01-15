@@ -4,6 +4,6 @@
     "weighted_graph" : false,
     "clustering" : true,
     "day" : "2021-01-01",
-    "fraction_samples" : [0.01,0.02],
+    "fraction_samples" : [0.1,0.2,0.3,0.4,0.5],
     "num_cpus" : -1
 }

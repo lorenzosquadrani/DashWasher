@@ -1,0 +1,9 @@
+{
+    "deep_graph_analysis" : false,
+    "directed_graph" : false,
+    "weighted_graph" : false,
+    "clustering" : true,
+    "day" : "2021-01-01",
+    "fraction_samples" : [0.1,0.2, 0.3, 0.4, 0.5, 0.6],
+    "num_cpus" : -1
+}

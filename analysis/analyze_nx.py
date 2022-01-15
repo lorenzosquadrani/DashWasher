@@ -7,12 +7,15 @@ import os
 import time
 import json
 import matplotlib.pyplot as plt
+import sys
 
 #%%
 ##--------------- READ CONFIGURATION FILE ----------------##
 ##--------------------------------------------------------##
 
-with open("../config.json", 'r') as f:
+config_path = sys.argv[1]
+
+with open(config_path, 'r') as f:
     config = json.load(f)
 
 deep_graph_analysis = config['deep_graph_analysis']
