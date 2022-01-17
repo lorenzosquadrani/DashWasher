@@ -139,20 +139,9 @@ if clustering:
 
     data['clustering_coefficient'] = clust_coeff_data
 
-# %%
-##------------------- MAIN COMPONENTS --------------------##
-##--------------------------------------------------------##
-
-if directed_graph:
-    main_comp_data = data_graph.subgraph(max(nx.weakly_connected_components(data_graph), key=len)).copy()
-
-else:
-    components = sorted([c for c in nx.connected_components(data_graph)], key=len, reverse=True)
-    main_comp_data = data_graph.subgraph(components[0])
-
 #%%
 ##--------------------- ASPL DATA ------------------------##
-##--------------------------------------------------------##ù
+##--------------------------------------------------------##
 
 for fs in fraction_samples:
     
@@ -160,25 +149,24 @@ for fs in fraction_samples:
     
     start = time.time()
 
-    mc_data_sample = main_comp_data.subgraph(
-        np.random.choice(main_comp_data.nodes(), int(fs*len(main_comp_data.nodes())))
-        )
+    chosen_nodes = np.random.choice(data_graph.nodes(), int(fs*len(data_graph.nodes())))
+    
+    subsample = main_comp_data.subgraph(chosen_nodes)
 
     if directed_graph:
-        mc_data_sample = data_graph.subgraph(max(nx.weakly_connected_components(mc_data_sample), key=len)).copy()
+        subsample = subsample.subgraph(max(nx.weakly_connected_components(subsample), key=len)).copy()
     else:
-        components = sorted([c for c in nx.connected_components(mc_data_sample)], key=len, reverse=True)
-        mc_data_sample = data_graph.subgraph(components[0])
+        subsample = subsample.subgraph(max(nx.connected_components(subsample), key=len)).copy()
 
-    ASPL_data = nx.average_shortest_path_length(mc_data_sample)
+    ASPL_data = nx.average_shortest_path_length(subsample)
     
-    print("Number of nodes: {}".format(len(mc_data_sample)))
+    print("Number of nodes: {}".format(len(subsample)))
     print("Number of cpus used: {}".format(num_cpus))
     print("Time required: {:.2f} seconds".format(time.time()-start))
     print("ASPL: {:.2f}\n".format(ASPL_data))
 
     data['num_cpus'].append(num_cpus)
-    data['sample_size'].append(len(mc_data_sample))
+    data['sample_size'].append(len(subsample))
     data['time'].append(time.time()-start)
     data['ASPL'].append(ASPL_data)
     
