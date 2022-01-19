@@ -39,7 +39,7 @@ else:
 ##---------------------- READ FILE -----------------------##
 ##--------------------------------------------------------##
 
-file_path = "../data/DASH-"+day+"/merged.txt"
+file_path = "../data/merged_data/"+day+"_merged.txt"
 transactions = pd.read_csv(file_path, sep = '\s+')
 
 output_path = './'+day

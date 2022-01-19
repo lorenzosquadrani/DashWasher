@@ -1,0 +1,1 @@
+{"metadata": {"day": "2021-10-01", "directed": true, "weighted": false}, "number_of_nodes": 53678, "number_of_edges": 348665, "clustering_coefficient": 0.006067529173625491, "num_cpus": [32], "sample_size": [53678], "num_links": [954038040], "time": [1620.004014492035], "ASPL": [9.699939764456353]}
