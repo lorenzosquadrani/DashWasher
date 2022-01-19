@@ -39,10 +39,10 @@ else:
 ##---------------------- READ FILE -----------------------##
 ##--------------------------------------------------------##
 
-file_path = "../data/merged_data/"+day+"_merged.txt"
+file_path = "./data/merged_data/"+day+"_merged.txt"
 transactions = pd.read_csv(file_path, sep = '\s+')
 
-output_path = './'+day
+output_path = './results/'+day
 
 #%%
 ##----------------- MAP PUBLIC KEY TO ID -----------------##
@@ -98,7 +98,7 @@ print("Number of edges of data graph: {}\n".format(n_edges_data))
 ##---------------------- PREPARE OUTPUT FILE -----------------------##
 ##------------------------------------------------------------------##
 
-output_path += '_nx_mp'
+output_path += '_nx_mp_DEL'
 
 if os.path.isfile(output_path+'.json'):
     print("Found already existing results. Trying to read old data and append new ones.\n")
@@ -139,7 +139,6 @@ def ASPL(nodes, graph, return_dict, procnum):
     
     tot_paths = 0.
     tot_SPL = 0.
-
     
     for source in nodes:        
         paths = nx.single_source_shortest_path_length(graph, source)
