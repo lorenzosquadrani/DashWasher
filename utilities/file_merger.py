@@ -16,9 +16,9 @@ if args.day:
 else:
     sys.exit("Please give a day")
 
-output = "./merged_data/" + day + "_merged.txt"
+output = "./data/merged_data/" + day + "_merged.txt"
 
-files = glob.glob("DASH-" +day + '/*.txt')
+files = glob.glob("data/DASH-" +day + '/*.txt')
 files.sort()
 
 first_line = True
