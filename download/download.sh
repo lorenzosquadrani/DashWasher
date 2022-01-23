@@ -1,14 +1,14 @@
 #!/bin/bash
 
-YEAR=2021
-MONTH=01
-DAY=01
+YEAR=$1
+MONTH=$2
+DAY=$3
 
 set -e   # set behaviour: exit the script if any command fails
 
 echo "Downloading transactions of the day $YEAR/$MONTH/$DAY"
 
-if test -d "DASH-$YEAR-$MONTH-$DAY"; then
+if test -d "data/DASH-$YEAR-$MONTH-$DAY"; then
     echo "Found a pre-existing folder for this day. I will try to complete it."
 else
     echo "I create the folder DASH-$YEAR-$MONTH-$DAY"
