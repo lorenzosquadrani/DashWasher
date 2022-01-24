@@ -98,7 +98,7 @@ print("Number of edges of data graph: {}\n".format(n_edges_data))
 ##---------------------- PREPARE OUTPUT FILE -----------------------##
 ##------------------------------------------------------------------##
 
-output_path += '_nx_mp_DEL'
+output_path += '_nx_mp'
 
 if os.path.isfile(output_path+'.json'):
     print("Found already existing results. Trying to read old data and append new ones.\n")
