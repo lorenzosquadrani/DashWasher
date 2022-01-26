@@ -1,12 +1,8 @@
 {
     "directed_graph" : true,
     "weighted_graph" : false,
-    "day" : ["2020-01-01",
-             "2020-05-01",
-             "2020-10-01",
-             "2021-01-01",
-             "2021-05-01",
-             "2021-10-01"],
+    "formula_ASPL" : true,
+    "day" : ["2021-06-01"],
     "fraction_samples" : [1.0],
     "num_cpus" : 0
 }

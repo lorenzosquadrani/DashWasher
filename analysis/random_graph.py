@@ -20,6 +20,7 @@ with open(config_path, 'r') as f:
 
 directed_graph = config['directed_graph']
 weighted_graph = config['weighted_graph']
+formula_ASPL = config['formula_ASPL']
 days = config['day']
 fraction_samples = config['fraction_samples']
 
@@ -89,7 +90,7 @@ for day in days:
     else:
         data = {'metadata': {'day': day,
                              'directed': directed_graph,
-                             'weighted': weighted_graph,},
+                             'weighted': weighted_graph},
                 'number_of_nodes': n_nodes_random,
                 'number_of_edges': n_edges_random,
                 'clustering_coefficient':None,
@@ -125,57 +126,73 @@ for day in days:
         return_dict[procnum] = (tot_SPL, tot_paths)
 
 
+    def ASPL_formula(n_nodes, n_edges):
+        L = 0.5 + (np.log(n_nodes)-0.57722)/np.log(n_edges/n_nodes)
+        return L
+
     #%%
     ##--------------------- ASPL DATA ------------------------##
     ##--------------------------------------------------------##ù
 
-    for fs in fraction_samples:
+    if not formula_ASPL:
+        for fs in fraction_samples:
 
-        print("Starting ASPL for a fraction of {} of the sample".format(fs))
+            print("Starting ASPL for a fraction of {} of the sample".format(fs))
 
-        start = time.time()
+            start = time.time()
 
-        num_nodes = int(fs*len(random_graph.nodes()))
+            num_nodes = int(fs*len(random_graph.nodes()))
 
-        rng = np.random.default_rng()
-        chosen_nodes = rng.choice(random_graph.nodes, num_nodes, replace=False)
-        subsample = random_graph.subgraph(chosen_nodes)
+            rng = np.random.default_rng()
+            chosen_nodes = rng.choice(random_graph.nodes, num_nodes, replace=False)
+            subsample = random_graph.subgraph(chosen_nodes)
 
-        nodes = np.array(subsample.nodes(), dtype='int')
+            nodes = np.array(subsample.nodes(), dtype='int')
 
-        nodes_for_subprocess = np.array_split(nodes, num_processes)
+            nodes_for_subprocess = np.array_split(nodes, num_processes)
 
-        process_list = []
+            process_list = []
 
-        manager = mp.Manager()
-        return_dict = manager.dict()
+            manager = mp.Manager()
+            return_dict = manager.dict()
 
-        for i in range(num_processes):
+            for i in range(num_processes):
 
-            p = mp.Process(target=ASPL, args=[nodes_for_subprocess[i], 
-                                              subsample,
-                                              return_dict,
-                                              i])
-            p.start()
-            process_list.append(p)
+                p = mp.Process(target=ASPL, args=[nodes_for_subprocess[i], 
+                                                  subsample,
+                                                  return_dict,
+                                                  i])
+                p.start()
+                process_list.append(p)
 
-        for p in process_list:
-            p.join()
+            for p in process_list:
+                p.join()
 
-        tot_SPL = sum([x[0] for x in return_dict.values()])
-        tot_paths = sum([x[1] for x in return_dict.values()])
-        ASPL = tot_SPL/tot_paths
+            tot_SPL = sum([x[0] for x in return_dict.values()])
+            tot_paths = sum([x[1] for x in return_dict.values()])
+            ASPL = tot_SPL/tot_paths
 
-        print("Number of cpus used: {}".format(num_cpus))
-        print("Time required: {:.2f} seconds".format(time.time()-start))
-        print("ASPL: {:.3f}\n".format(ASPL))
+            print("Number of cpus used: {}".format(num_cpus))
+            print("Time required: {:.2f} seconds".format(time.time()-start))
+            print("ASPL: {:.3f}\n".format(ASPL))
 
-        data['num_cpus'].append(num_cpus)
-        data['num_links'].append(int(tot_paths))
-        data['time'].append(time.time()-start)
+            data['num_cpus'].append(num_cpus)
+            data['num_links'].append(int(tot_paths))
+            data['time'].append(time.time()-start)
+            data['ASPL'].append(ASPL)
+
+    else:
+        ASPL = ASPL_formula(n_nodes_random, n_edges_random)
+        
+        print("ASPL computed through the formula: {:.3f}\n".format(ASPL))
+        
+        data['num_cpus'].append(0)
+        data['num_links'].append(0)
+        data['time'].append(0)
         data['ASPL'].append(ASPL)
 
-        with open(output_path + '.json', 'w') as f:
-            f.write(json.dumps(data))
+    print("-"*20)
+    with open(output_path + '.json', 'w') as f:
+        f.write(json.dumps(data))
 
     
