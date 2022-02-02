@@ -7,13 +7,31 @@ import os
 import time
 import json
 import sys
+from argparse import ArgumentParser
 
+parser = ArgumentParser()
+
+# get day argument
+parser.add_argument("-c", "--config", dest="config", type=str, help="configuration file path")
+parser.add_argument("-d", "--day", dest="day", type=str, help="day")
+
+args = parser.parse_args()
+
+if args.config:
+    config_path = args.config
+else:
+    sys.exit("Please give a configuration file")
+    
+if args.day:
+    day = args.day
+else:
+    sys.exit("Please give a day")
+    
 
 #%%
 ##--------------- READ CONFIGURATION FILE ----------------##
 ##--------------------------------------------------------##
 
-config_path = sys.argv[1]
 
 with open(config_path, 'r') as f:
     config = json.load(f)
@@ -21,7 +39,6 @@ with open(config_path, 'r') as f:
 directed_graph = config['directed_graph']
 weighted_graph = config['weighted_graph']
 clustering = config['clustering']
-day = config['day']
 fraction_samples = config['fraction_samples']
 
 num_cpus = config['num_cpus']
