@@ -1,1 +1,1 @@
-{"metadata": {"day": "2021-12-01", "directed": true, "weighted": false}, "number_of_nodes": 37708, "number_of_edges": 159319, "clustering_coefficient": 0.00011122801857253586, "num_cpus": [0], "num_links": [0], "time": [0], "ASPL": [7.411975907780695]}
+{"metadata": {"day": "2021-12-01", "directed": true, "weighted": false}, "number_of_nodes": 37708, "number_of_edges": 159319, "clustering_coefficient": 9.878256658099217e-05, "num_cpus": [0, 32], "num_links": [0, 1376707412], "time": [0, 1941.6711044311523], "ASPL": [7.411975907780695, 7.475760599740274]}
