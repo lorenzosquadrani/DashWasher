@@ -10,9 +10,13 @@ def findFirstBlock(timeBound, index):
     step = 10000
     descending = True
     while step > 0 or time < timeBound:
-
-        time = datetime.datetime.fromtimestamp(requests.get('https://sochain.com/api/v2/get_block/' + str(crypto) + '/' + str(index)).json()['data']['time']).strftime('%Y-%m-%d %H:%M:%S')
-
+        
+        try:
+            time = datetime.datetime.fromtimestamp(requests.get('https://sochain.com/api/v2/get_block/' + str(crypto) + '/' + str(index)).json()['data']['time']).strftime('%Y-%m-%d %H:%M:%S')
+        except:
+            index = index+1
+            continue
+            
         if time < timeBound:
             index = index + step
             if descending is True:
