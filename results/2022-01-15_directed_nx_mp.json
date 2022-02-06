@@ -1,0 +1,1 @@
+{"metadata": {"day": "2022-01-15", "directed": true, "weighted": false}, "number_of_nodes": 41300, "number_of_edges": 176801, "clustering_coefficient": 0.007393945335334102, "num_cpus": [32], "sample_size": [41300], "num_links": [510561116], "time": [643.7927594184875], "ASPL": [10.81811699306925]}

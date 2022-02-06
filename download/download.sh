@@ -26,3 +26,5 @@ do
         python3 download/SoChainDownloader.py "dash" "$YEAR-$MONTH-$DAY-$i:00:00" "$YEAR-$MONTH-$DAY-$i:59:59" "data/DASH-$YEAR-$MONTH-$DAY/$i.txt"
     fi
 done
+
+exit(0)

@@ -14,7 +14,7 @@ def findFirstBlock(timeBound, index):
         try:
             time = datetime.datetime.fromtimestamp(requests.get('https://sochain.com/api/v2/get_block/' + str(crypto) + '/' + str(index)).json()['data']['time']).strftime('%Y-%m-%d %H:%M:%S')
         except:
-            index = index+1
+            index += 1
             continue
             
         if time < timeBound:
@@ -34,19 +34,24 @@ def findFirstBlock(timeBound, index):
 def findLastBlock(timeBound, index):
     step = 10000
     time = ''
+    
     while step > 0:
-        response = requests.get('https://sochain.com/api/v2/get_block/' + str(crypto) + '/' + str(index + step))
         exceed = False
-        if response == '<Response [404]>':
-            exceed = True
-        else:
+        
+        try: 
+            response = requests.get('https://sochain.com/api/v2/get_block/' + str(crypto) + '/' + str(index + step))
             time = datetime.datetime.fromtimestamp(response.json()['data']['time']).strftime('%Y-%m-%d %H:%M:%S')
-            exceed = time > timeBound
+        except:
+            if response == '<Response [404]>' or time>timeBound:
+                exceed = True
+            else:
+                step+=1
 
         if exceed:
             step = int(step / 2)
         else:
             index = index + step
+            
     return index
 
 
