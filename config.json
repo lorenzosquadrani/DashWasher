@@ -4,5 +4,6 @@
     "clustering" : true,
     "day" : "2020-01-01",
     "fraction_samples" : [1.0],
-    "num_cpus" : 0
+    "num_cpus" : 0,
+    "formula_ASPL_rnd" : true
 }

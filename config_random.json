@@ -1,8 +1,0 @@
-{
-    "directed_graph" : true,
-    "weighted_graph" : false,
-    "formula_ASPL" : true,
-    "day" : ["2021-06-01"],
-    "fraction_samples" : [1.0],
-    "num_cpus" : 0
-}
